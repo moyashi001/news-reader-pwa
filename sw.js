@@ -1,4 +1,4 @@
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL_CACHE = `news-pwa-shell-${VERSION}`;
 const IMAGE_CACHE = `news-pwa-images-${VERSION}`;
 

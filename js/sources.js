@@ -128,5 +128,17 @@ const Sources = (() => {
     save(load().filter((f) => f.id !== id));
   }
 
-  return { getAll, toggle, add, remove, getNewsApiKey, setNewsApiKey, fetchAllEnabled, fetchArticlesForFeed };
+  async function fetchOgImage(articleUrl) {
+    if (!articleUrl) return null;
+    try {
+      const res = await fetch(`/api/fetch-ogimage?${new URLSearchParams({ url: articleUrl })}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.image || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  return { getAll, toggle, add, remove, getNewsApiKey, setNewsApiKey, fetchAllEnabled, fetchArticlesForFeed, fetchOgImage };
 })();

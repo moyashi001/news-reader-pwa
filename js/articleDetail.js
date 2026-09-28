@@ -36,6 +36,8 @@ const ArticleDetail = (() => {
     document.getElementById('article-content').textContent = article.content || 'この記事の本文は提供されていません。「元記事を読む」から全文をご覧ください。';
     const openBtn = document.getElementById('open-original-btn');
     openBtn.href = article.url || '#';
+    const openBtnInline = document.getElementById('open-original-btn-inline');
+    openBtnInline.href = article.url || '#';
     document.getElementById('article-scroll').scrollTop = 0;
   }
 

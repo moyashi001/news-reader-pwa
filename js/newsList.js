@@ -66,6 +66,32 @@ const NewsList = (() => {
     list.innerHTML = html;
   }
 
+  const ogImageAttempted = new Set();
+
+  async function loadOgImageFor(article) {
+    if (ogImageAttempted.has(article.id)) return;
+    ogImageAttempted.add(article.id);
+    const image = await Sources.fetchOgImage(article.url);
+    if (!image) return;
+    article.thumbnailUrl = image;
+    article.imageUrl = article.imageUrl || image;
+    const stored = await Storage.getArticleById(article.id);
+    if (stored) await Storage.saveArticles([{ ...stored, thumbnailUrl: image, imageUrl: stored.imageUrl || image }]);
+    const row = document.querySelector(`.news-row[data-id="${CSS.escape(article.id)}"]`);
+    if (row) {
+      const thumbEl = row.querySelector('.thumb');
+      if (thumbEl && thumbEl.tagName === 'DIV') {
+        const img = document.createElement('img');
+        img.className = 'thumb';
+        img.alt = '';
+        img.loading = 'lazy';
+        img.src = image;
+        img.onerror = () => img.removeAttribute('src');
+        thumbEl.replaceWith(img);
+      }
+    }
+  }
+
   function renderList() {
     const list = document.getElementById('news-list');
     const items = filtered();
@@ -90,6 +116,9 @@ const NewsList = (() => {
         const id = row.getAttribute('data-id');
         location.hash = `#/article/${encodeURIComponent(id)}`;
       });
+    });
+    visible.forEach((a) => {
+      if (!a.thumbnailUrl && a.url) loadOgImageFor(a);
     });
   }
 
